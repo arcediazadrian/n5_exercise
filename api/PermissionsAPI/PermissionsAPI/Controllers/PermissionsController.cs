@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PermissionsAPI.Models;
 
 namespace PermissionsAPI.Controllers
 {
@@ -6,58 +7,48 @@ namespace PermissionsAPI.Controllers
     [ApiController]
     public class PermissionsController : ControllerBase
     {
+
+        private PermissionUnitOfWork unitOfWork = new PermissionUnitOfWork();
+
         [HttpGet]
-        public IEnumerable<Permission> Get()
+        public async Task<IActionResult> Get()
         {
-            using var db = new PermissionsContext();
-
-            var permissions = db.Permissions.OrderBy(b => b.Id).ToList();
-
-            return permissions;
+            var permissions = await unitOfWork.PermissionRepository.GetPermissions();
+            return Ok(permissions);
         }
 
         [HttpGet("{id}")]
-        public Permission Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            using var db = new PermissionsContext();
-
-            var permission = db.Permissions.Where(p => p.Id == id).First();
-
-            return permission;
+            var permission = await unitOfWork.PermissionRepository.GetPermissionById(id);
+            return Ok(permission);
         }
 
         [HttpPost]
-        public void Post([FromBody] Permission permission)
+        public async Task<IActionResult> Post([FromBody] Permission permission)
         {
-            using var db = new PermissionsContext();
+            unitOfWork.PermissionRepository.InsertPermission(permission);
+            await unitOfWork.PermissionRepository.Save();
 
-            permission.GrantedDate = DateTime.Now;
-            db.Add(permission);
-            db.SaveChanges();
+            return Ok();
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] Permission permissionToUpdate)
+        public async Task<IActionResult> Put(int id, [FromBody] Permission permissionToUpdate)
         {
-            using var db = new PermissionsContext();
+            await unitOfWork.PermissionRepository.UpdatePermission(id, permissionToUpdate);
+            await unitOfWork.PermissionRepository.Save();
 
-            var permission = db.Permissions.Where(p => p.Id == id).First();
-
-            permission.EmployeeFirstName = permissionToUpdate.EmployeeFirstName;
-            permission.EmployeeLastName = permissionToUpdate.EmployeeLastName;
-            permission.PermissionType = permissionToUpdate.PermissionType;
-            db.SaveChanges();
+            return Ok();
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            using var db = new PermissionsContext();
+            await unitOfWork.PermissionRepository.DeletePermission(id);
+            await unitOfWork.PermissionRepository.Save();
 
-            var permission = db.Permissions.Where(p => p.Id == id).First();
-
-            db.Remove(permission);
-            db.SaveChanges();
+            return Ok();
         }
     }
 }

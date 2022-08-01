@@ -8,6 +8,6 @@ CREATE TABLE Permissions(
     Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
     EmployeeFirstName TEXT NOT NULL,
     EmployeeLastName TEXT NOT NULL,
-    PermissionType INT FOREIGN KEY REFERENCES PermissionTypes(Id),
+    PermissionTypeId INT NOT NULL FOREIGN KEY REFERENCES PermissionTypes(Id),
     GrantedDate DATE NOT NULL
 );

@@ -17,34 +17,23 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import AddIcon from '@mui/icons-material/Add';
 import ListSubheader from '@mui/material/ListSubheader';
 import {
-    Link
+    Link,
+    useNavigate
 } from "react-router-dom";
 
 function Layout(props) {
-    const [permissions, setPermissions] = useState([]);
-    const [permissionTypes, setPermissionTypes] = useState([]);
+    const [openDrawer, setOpenDrawer] = useState(false)
+    const [title, setTitle] = useState('Permissions')
 
-    const getInitialData = async () => {
-        const permissionsResult = await axios.get('https://localhost:7204/api/Permissions');
-        const permissionTypesResult = await axios.get('https://localhost:7204/api/PermissionTypes');
+    const navigate = useNavigate()
 
-        setPermissions([...permissionsResult.data, ...permissionsResult.data, ...permissionsResult.data,]);
-        setPermissionTypes(permissionTypesResult.data);
+    const navigateAndUpdateTitle = (route, title) => {
+        setTitle(title)
+        navigate(route)
     }
 
-    useEffect(() => {
-        getInitialData();
-    }, [])
-
-    const [state, setState] = React.useState({
-        top: false,
-        left: false,
-        bottom: false,
-        right: false,
-    });
-
     const toggleDrawer =
-        (anchor, open) =>
+        (open) =>
             (event) => {
                 if (
                     event.type === 'keydown' &&
@@ -54,55 +43,65 @@ function Layout(props) {
                     return;
                 }
 
-                setState({ ...state, [anchor]: open });
+                setOpenDrawer(open);
             };
 
-    const list = (anchor) => (
+    const list = () => (
         <Box
-            sx={{ width: anchor === 'top' || anchor === 'bottom' ? 'auto' : 250 }}
+            sx={{ width: 250 }}
             role="presentation"
-            onClick={toggleDrawer(anchor, false)}
-            onKeyDown={toggleDrawer(anchor, false)}
+            onClick={toggleDrawer(false)}
+            onKeyDown={toggleDrawer(false)}
         >
             <List subheader={<ListSubheader>Permissions</ListSubheader>}>
-                {['List', 'Create'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <Link to="/permissions/-1">
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <ListAltIcon /> : <AddIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </Link>
-                    </ListItem>
-                ))}
+                <ListItem key={'List'} disablePadding>
+                    <ListItemButton onClick={() => navigateAndUpdateTitle('/permissions', 'Permissions')}>
+                        <ListItemIcon>
+                            <ListAltIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'List'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem key={'Create'} disablePadding>
+                    <ListItemButton onClick={() => navigateAndUpdateTitle('/permissions/-1', 'Permissions')}>
+                        <ListItemIcon>
+                            <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Create'} />
+                    </ListItemButton>
+                </ListItem>
             </List>
             <Divider />
             <List subheader={<ListSubheader>Permission Types</ListSubheader>}>
-                {['List', 'Create'].map((text, index) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <ListAltIcon /> : <AddIcon />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
+                <ListItem key={'List'} disablePadding>
+                    <ListItemButton onClick={() => navigateAndUpdateTitle('/permissionTypes', 'Permission Types')}>
+                        <ListItemIcon>
+                            <ListAltIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'List'} />
+                    </ListItemButton>
+                </ListItem>
+                <ListItem key={'Create'} disablePadding>
+                    <ListItemButton onClick={() => navigateAndUpdateTitle('/permissionTypes/-1', 'Permission Types')}>
+                        <ListItemIcon>
+                            <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={'Create'} />
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Box>
     );
 
     return (
-        <Box sx={{height: '100vh', width: '100vw'}}>
+        <Box sx={{ height: '100vh', width: '100vw' }}>
             <Box>
                 <Drawer
-                    anchor={'left'}
-                    open={state['left']}
-                    onClose={toggleDrawer('left', false)}
+                    anchor="left"
+                    open={openDrawer}
+                    onClose={toggleDrawer(false)}
                 >
-                    {list('left')}
+                    {list()}
                 </Drawer>
                 <AppBar position="static">
                     <Toolbar>
@@ -113,12 +112,12 @@ function Layout(props) {
                             aria-label="menu"
                             position="absolute"
                             sx={{ mr: 2 }}
-                            onClick={toggleDrawer('left', true)}
+                            onClick={toggleDrawer(true)}
                         >
                             <MenuIcon />
                         </IconButton>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                            Permissions
+                            {title}
                         </Typography>
                         <div>
                             <IconButton
