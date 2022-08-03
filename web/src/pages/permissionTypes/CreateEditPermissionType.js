@@ -26,7 +26,7 @@ function CreateEditPermissionType({ refreshPermissionTypes }) {
 
     const getFormData = async () => {
         if (routeParams && routeParams.permissionTypeId !== -1) {
-            const permissionResult = await axios.get(`https://localhost:7204/api/PermissionTypes/${routeParams.permissionTypeId}`);
+            const permissionResult = await axios.get(`${process.env.REACT_APP_PERMISSIONS_API_URL}/PermissionTypes/${routeParams.permissionTypeId}`);
             setDescription(permissionResult.data.description);
         }
     }
@@ -48,9 +48,9 @@ function CreateEditPermissionType({ refreshPermissionTypes }) {
     const savePermissionType = async (permissionType) => {
         try {
             if (permissionType.id === -1) {
-                await axios.post('https://localhost:7204/api/PermissionTypes', { ...permissionType, id: 0 });
+                await axios.post(`${process.env.REACT_APP_PERMISSIONS_API_URL}/PermissionTypes`, { ...permissionType, id: 0 });
             } else {
-                await axios.put(`https://localhost:7204/api/PermissionTypes/${permissionType.id}`, permissionType);
+                await axios.put(`${process.env.REACT_APP_PERMISSIONS_API_URL}/PermissionTypes/${permissionType.id}`, permissionType);
             }
 
             await refreshPermissionTypes();
@@ -65,7 +65,7 @@ function CreateEditPermissionType({ refreshPermissionTypes }) {
 
     const deletePermission = async (id) => {
         try {
-            await axios.delete(`https://localhost:7204/api/PermissionTypes/${id}`);
+            await axios.delete(`${process.env.REACT_APP_PERMISSIONS_API_URL}/PermissionTypes/${id}`);
             await refreshPermissionTypes();
 
             setShowSnackBarAsError(false);

@@ -17,8 +17,8 @@ function App() {
   const [permissionTypes, setPermissionTypes] = useState([]);
 
   const getInitialData = async () => {
-    const permissionsResult = await axios.get('https://localhost:7204/api/Permissions');
-    const permissionTypesResult = await axios.get('https://localhost:7204/api/PermissionTypes');
+    const permissionsResult = await axios.get(`${process.env.REACT_APP_PERMISSIONS_API_URL}/Permissions`);
+    const permissionTypesResult = await axios.get(`${process.env.REACT_APP_PERMISSIONS_API_URL}/PermissionTypes`);
 
     setPermissions(permissionsResult.data);
     setPermissionTypes(permissionTypesResult.data);
@@ -29,12 +29,12 @@ function App() {
   }, [])
 
   const refreshPermissions = async () => {
-    const updatedPermissions = await axios.get('https://localhost:7204/api/Permissions');
+    const updatedPermissions = await axios.get(`${process.env.REACT_APP_PERMISSIONS_API_URL}/Permissions`);
     setPermissions(updatedPermissions.data);
   }
 
   const refreshPermissionTypes = async () => {
-    const updatedPermissionTypes = await axios.get('https://localhost:7204/api/PermissionTypes');
+    const updatedPermissionTypes = await axios.get(`${process.env.REACT_APP_PERMISSIONS_API_URL}/PermissionTypes`);
     setPermissionTypes(updatedPermissionTypes.data);
   }
 

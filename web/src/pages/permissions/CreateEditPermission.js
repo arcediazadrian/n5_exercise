@@ -34,7 +34,7 @@ function CreateEditPermission({ refreshPermissions, permissionTypes }) {
 
   const getFormData = async () => {
     if (routeParams && routeParams.permissionId !== -1) {
-      const permissionResult = await axios.get(`https://localhost:7204/api/Permissions/${routeParams.permissionId}`);
+      const permissionResult = await axios.get(`${process.env.REACT_APP_PERMISSIONS_API_URL}/Permissions/${routeParams.permissionId}`);
       setEmployeeFirstName(permissionResult.data.employeeFirstName);
       setEmployeeLastName(permissionResult.data.employeeLastName);
       setPermissionType(permissionResult.data.permissionTypeId);
@@ -72,9 +72,9 @@ function CreateEditPermission({ refreshPermissions, permissionTypes }) {
   const savePermission = async (permission) => {
     try {
       if (permission.id === -1) {
-        await axios.post('https://localhost:7204/api/Permissions', { ...permission, id: 0 });
+        await axios.post(`${process.env.REACT_APP_PERMISSIONS_API_URL}/Permissions`, { ...permission, id: 0 });
       } else {
-        await axios.put(`https://localhost:7204/api/Permissions/${permission.id}`, permission);
+        await axios.put(`${process.env.REACT_APP_PERMISSIONS_API_URL}/Permissions/${permission.id}`, permission);
       }
 
       await refreshPermissions();
@@ -89,7 +89,7 @@ function CreateEditPermission({ refreshPermissions, permissionTypes }) {
 
   const deletePermission = async (id) => {
     try {
-      await axios.delete(`https://localhost:7204/api/Permissions/${id}`);
+      await axios.delete(`${process.env.REACT_APP_PERMISSIONS_API_URL}/Permissions/${id}`);
       await refreshPermissions();
 
       setShowSnackBarAsError(false);
