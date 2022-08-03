@@ -17,3 +17,6 @@
 
 ## Permission Type Creation
 ![permissionTypeCreate](https://user-images.githubusercontent.com/26807808/182626057-2bc17b78-5e7d-4a0a-98d7-01adfffb710f.PNG)
+
+## Tests
+![tests](https://user-images.githubusercontent.com/26807808/182685259-54a9db8b-bad7-4deb-a0a0-0f2427a15d43.PNG)
