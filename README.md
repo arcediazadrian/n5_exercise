@@ -9,7 +9,7 @@
 ## Permission Creation/Validation
 ![validation](https://user-images.githubusercontent.com/26807808/182625992-0a86d5c6-2253-4463-804e-9f9ce8db47e7.PNG)
 
-## ## Permission Creation/Success
+## Permission Creation/Success
 ![success](https://user-images.githubusercontent.com/26807808/182626015-f06716fe-7ae1-4c2e-bb7d-97c24f418d9b.PNG)
 
 ## Permission Type List
