@@ -11,6 +11,6 @@ namespace PermissionsAPI.Models
         public int PermissionTypeId { get; set; }
         public DateTime GrantedDate { get; set; }
 
-        public virtual PermissionType PermissionType { get; set; } = null!;
+        public virtual PermissionType? PermissionType { get; set; } = null!;
     }
 }

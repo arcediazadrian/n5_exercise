@@ -27,10 +27,13 @@ function App() {
 
 
   const savePermission = async (permission) => {
-    console.log(permission)
-    const result = await axios.post('https://localhost:7204/api/Permissions', permission)
+    console.log(permission, permission.id === -1)
 
-    console.log(result)
+    if(permission.id === -1){
+      await axios.post('https://localhost:7204/api/Permissions', {...permission, id: 0})
+    }else{
+      await axios.put(`https://localhost:7204/api/Permissions/${permission.id}`, permission)
+    }
 
     const updatedPermissions = await axios.get('https://localhost:7204/api/Permissions');
     setPermissions(updatedPermissions.data)
@@ -39,7 +42,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/permissions/:permissionId" element={<CreateEditPermission savePermission={savePermission}/>} />
+          <Route path="/permissions/:permissionId" element={<CreateEditPermission savePermission={savePermission} permissionTypes={permissionTypes}/>} />
         <Route path="/permissions" element={<PermissionsList permissions={permissions} />} >
         </Route>
         <Route

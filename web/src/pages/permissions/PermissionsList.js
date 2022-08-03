@@ -1,10 +1,6 @@
 import { Typography, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
@@ -12,54 +8,53 @@ import Layout from "../../components/Layout";
 
 import React from "react";
 
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-  >
-    •
-  </Box>
-);
+import {
+  useNavigate
+} from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(3),
   color: theme.palette.text.secondary,
+  elevation: 3,
+  margin: '20px',
 }));
 
 function PermissionsList({ permissions }) {
+  const navigate = useNavigate();
+
+  const navigateToEdit = (id) => {
+    navigate(`/permissions/${id}`)
+  }
+
   return (
     <Layout>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="stretch"
-        spacing={6}
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'stretch' }}
       >
-        {permissions.map(permission => (
-          <Grid item xs={6}>
+        <Box sx={{ width: '60vw' }}>
+          {permissions.map(permission => (
             <Item>
-              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                 <Box sx={{ flexGrow: 6 }}>
                   <Typography sx={{ fontSize: 32 }} color="text.primary">
                     {`${permission.employeeFirstName} ${permission.employeeLastName}`}
                   </Typography>
                   <Typography variant="h5" >
-                    {permission.permissionType}
+                    {permission.permissionType.description}
                   </Typography>
                   <Typography sx={{ mb: 1.5 }} color="text.secondary">
                     {permission.grantedDate}
                   </Typography>
                 </Box>
-                <Box sx={{ flexGrow: 1 }}>
+                <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginRight: '20px' }}>
                   <IconButton
                     size="large"
                     aria-label="account of current user"
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
-                    onClick={() => { }}
+                    onClick={() => navigateToEdit(permission.id)}
                     color="inherit"
                   >
                     <EditIcon />
@@ -67,9 +62,9 @@ function PermissionsList({ permissions }) {
                 </Box>
               </Box>
             </Item>
-          </Grid>
-        ))}
-      </Grid>
+          ))}
+        </Box>
+      </Box>
     </Layout>
   );
 }

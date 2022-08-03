@@ -119,7 +119,7 @@ function Layout(props) {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             {title}
                         </Typography>
-                        <div>
+                        {/* <div>
                             <IconButton
                                 size="large"
                                 aria-label="account of current user"
@@ -131,7 +131,7 @@ function Layout(props) {
                                 {props.iconComponent}
                             </IconButton>
 
-                        </div>
+                        </div> */}
                     </Toolbar>
                 </AppBar>
             </Box>
