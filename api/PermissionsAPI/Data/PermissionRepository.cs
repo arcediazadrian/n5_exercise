@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PermissionsAPI.Models;
+﻿using Domain;
+using Microsoft.EntityFrameworkCore;
 
-namespace PermissionsAPI
+namespace Data
 {
     public class PermissionRepository: IPermissionRepository, IDisposable
     {

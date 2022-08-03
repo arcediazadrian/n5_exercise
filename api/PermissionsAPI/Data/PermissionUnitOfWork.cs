@@ -1,6 +1,4 @@
-﻿using PermissionsAPI.Models;
-
-namespace PermissionsAPI
+﻿namespace Data
 {
     public class PermissionUnitOfWork
     {

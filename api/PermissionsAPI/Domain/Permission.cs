@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace PermissionsAPI.Models
+﻿namespace Domain
 {
     public partial class Permission
     {

@@ -1,4 +1,4 @@
-﻿using PermissionsAPI.Models;
+﻿using Domain;
 
 namespace PermissionsAPI
 {

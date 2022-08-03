@@ -1,5 +1,6 @@
+using Data;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
-using PermissionsAPI.Models;
 
 namespace PermissionsAPI.Controllers
 {
