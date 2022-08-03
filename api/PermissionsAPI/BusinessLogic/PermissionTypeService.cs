@@ -1,4 +1,5 @@
-﻿using Domain.Interfaces;
+﻿using Domain.Exceptions;
+using Domain.Interfaces;
 using Domain.Models;
 
 namespace BusinessLogic
@@ -24,20 +25,51 @@ namespace BusinessLogic
 
         public async Task InsertPermissionType(PermissionType permissionType)
         {
+            validateIfPermissionTypeIsValid(permissionType);
+
             permissionUnitOfWork.PermissionTypeRepository.InsertPermissionType(permissionType);
             await permissionUnitOfWork.Save();
         }
 
         public async Task DeletePermissionType(int id)
         {
+            await validateIfPermissionTypeExists(id);
+            await validateIfPermissionTypeIsInUse(id);
+
             await permissionUnitOfWork.PermissionTypeRepository.DeletePermissionType(id);
             await permissionUnitOfWork.Save();
         }
 
         public async Task UpdatePermissionType(int id, PermissionType permissionTypeToUpdate)
         {
+            validateIfPermissionTypeIsValid(permissionTypeToUpdate);
+            await validateIfPermissionTypeExists(id);
+
             await permissionUnitOfWork.PermissionTypeRepository.UpdatePermissionType(id, permissionTypeToUpdate);
             await permissionUnitOfWork.Save();
         }
+
+        private void validateIfPermissionTypeIsValid(PermissionType permissionType)
+        {
+            if (permissionType == null || permissionType.Description == String.Empty)
+                throw new BadRequestException();
+        }
+
+        private async Task validateIfPermissionTypeExists(int id)
+        {
+            var permissionType = await permissionUnitOfWork.PermissionTypeRepository.GetPermissionTypeById(id);
+            if (permissionType == null)
+                throw new BadRequestException();
+        }
+
+        private async Task validateIfPermissionTypeIsInUse(int id)
+        {
+            var permissions = await permissionUnitOfWork.PermissionRepository.GetPermissions();
+            var permissionsUsingPermissionType = permissions.Where(p => p.PermissionTypeId == id);
+            if (permissionsUsingPermissionType != null && permissionsUsingPermissionType.Count() > 0)
+                throw new BadRequestException();
+        }
+
+        
     }
 }

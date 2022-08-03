@@ -1,3 +1,4 @@
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -19,36 +20,75 @@ namespace PermissionsAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var permissions = await permissionService.GetPermissions();
-            return Ok(permissions);
+            try
+            {
+                var permissions = await permissionService.GetPermissions();
+
+                if(permissions == null) { return NotFound(); }
+                return Ok(permissions);
+            }
+            catch (BadRequestException badRequestException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var permission = await permissionService.GetPermissionById(id);
-            return Ok(permission);
+            try
+            {
+                var permission = await permissionService.GetPermissionById(id);
+
+                if (permission == null) { return NotFound(); }
+                return Ok(permission);
+            }
+            catch (BadRequestException badRequestException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Permission permission)
         {
-            await permissionService.InsertPermission(permission);
-            return Ok();
+            try
+            {
+                await permissionService.InsertPermission(permission);
+                return Ok();
+            }
+            catch (BadRequestException badRequestException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Permission permissionToUpdate)
         {
-            await permissionService.UpdatePermission(id, permissionToUpdate);
-            return Ok();
+            try
+            {
+                await permissionService.UpdatePermission(id, permissionToUpdate);
+                return Ok();
+            }
+            catch (BadRequestException badRequestException)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await permissionService.DeletePermission(id);
-            return Ok();
+            try
+            {
+                await permissionService.DeletePermission(id);
+                return Ok();
+            }
+            catch (BadRequestException badRequestException)
+            {
+                return BadRequest();
+            }
         }
     }
 }
