@@ -1,42 +1,48 @@
+import React, { useEffect, useState } from "react";
+
 import { MenuItem, TextField, Button } from '@mui/material';
 import { Box } from '@mui/system';
-import Layout from '../../components/Layout';
-
-import React, { useEffect, useState } from "react";
-import SaveIcon from '@mui/icons-material/Save';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-
-import {
-  useParams
-} from "react-router-dom";
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import Select from '@mui/material/Select';
+import { FormControl, InputLabel, FormHelperText } from '@mui/material';
+import Stack from '@mui/material/Stack';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import { useParams } from "react-router-dom";
 import axios from 'axios';
 
-function CreateEditPermission(props) {
+import Layout from '../../components/Layout';
+
+function CreateEditPermission({ refreshPermissions, permissionTypes }) {
+  const [showSnackBar, setShowSnackBar] = useState(false);
+  const [showSnackBarAsError, setShowSnackBarAsError] = useState(false);
+
   const [employeeFirstName, setEmployeeFirstName] = useState(null);
   const [employeeFirstNameError, setEmployeeFirstNameError] = useState(false);
+
   const [employeeLastName, setEmployeeLastName] = useState(null);
   const [employeeLastNameError, setEmployeeLastNameError] = useState(false);
+
   const [permissionType, setPermissionType] = useState(null);
+  const [permissionTypeError, setPermissionTypeError] = useState(false);
 
   const routeParams = useParams();
 
+  useEffect(() => {
+    getFormData();
+  }, [])
+
   const getFormData = async () => {
-    console.log(routeParams, routeParams.permissionId)
     if (routeParams && routeParams.permissionId !== -1) {
       const permissionResult = await axios.get(`https://localhost:7204/api/Permissions/${routeParams.permissionId}`);
-      setEmployeeFirstName(permissionResult.data.employeeFirstName)
-      setEmployeeLastName(permissionResult.data.employeeLastName)
-      setPermissionType(permissionResult.data.permissionType.id)
+      setEmployeeFirstName(permissionResult.data.employeeFirstName);
+      setEmployeeLastName(permissionResult.data.employeeLastName);
+      setPermissionType(permissionResult.data.permissionTypeId);
     }
-
   }
 
   const save = () => {
     let isFormValid = true
-    console.log(employeeFirstName)
     if (employeeFirstName === null || employeeFirstName === undefined || employeeFirstName === "") {
       isFormValid = false;
       setEmployeeFirstNameError(true)
@@ -44,7 +50,6 @@ function CreateEditPermission(props) {
       setEmployeeFirstNameError(false)
     }
 
-    console.log(employeeLastName)
     if (employeeLastName === null || employeeLastName === undefined || employeeLastName === "") {
       isFormValid = false;
       setEmployeeLastNameError(true)
@@ -52,46 +57,102 @@ function CreateEditPermission(props) {
       setEmployeeLastNameError(false)
     }
 
+    if (permissionType === null || permissionType === undefined || permissionType === "") {
+      isFormValid = false;
+      setPermissionTypeError(true)
+    } else {
+      setPermissionTypeError(false)
+    }
+
     if (isFormValid) {
-      props.savePermission({ id: parseInt(routeParams.permissionId), employeeFirstName, employeeLastName, permissionTypeId: permissionType})
+      savePermission({ id: parseInt(routeParams.permissionId), employeeFirstName, employeeLastName, permissionTypeId: permissionType })
     }
   }
 
-  useEffect(() => {
-    getFormData()
-  }, [])
+  const savePermission = async (permission) => {
+    try {
+      if (permission.id === -1) {
+        await axios.post('https://localhost:7204/api/Permissions', { ...permission, id: 0 });
+      } else {
+        await axios.put(`https://localhost:7204/api/Permissions/${permission.id}`, permission);
+      }
+
+      await refreshPermissions();
+
+      setShowSnackBarAsError(false);
+    } catch {
+      setShowSnackBarAsError(true);
+    } finally {
+      setShowSnackBar(true);
+    }
+  }
+
+  const deletePermission = async (id) => {
+    try {
+      await axios.delete(`https://localhost:7204/api/Permissions/${id}`);
+      await refreshPermissions();
+
+      setShowSnackBarAsError(false);
+    } catch {
+      setShowSnackBarAsError(true);
+    } finally {
+      setShowSnackBar(true);
+    }
+
+  }
+
+  const handleClose = (_, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowSnackBar(false);
+  };
+
+  const iconComponent = routeParams && routeParams.permissionId !== -1 ? (<DeleteIcon />) : null
+  const iconAction = () => deletePermission(routeParams.permissionId);
 
   return (
-    <Layout>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'stretch' }}>
-        <Box sx={{ margin: '20px' }}>
-          <TextField id="outlined-basic" error={employeeFirstNameError} helperText={employeeFirstNameError ? 'Field cannot be empty' : ''} label="Employee First Name" variant="outlined" onChange={(event) => setEmployeeFirstName(event.target.value)} value={employeeFirstName} />
+    <Layout title="Permissions" iconComponent={iconComponent} iconAction={iconAction}>
+      <Stack sx={{ width: '100%' }}>
+        <Snackbar open={showSnackBar} autoHideDuration={2000} onClose={handleClose}>
+          {showSnackBarAsError ?
+            (<Alert elevation={6} variant="filled" onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+              Operation was unsuccessful!
+            </Alert>)
+            : (<Alert elevation={6} variant="filled" onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+              Operation was successful!
+            </Alert>)}
+        </Snackbar>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'stretch' }}>
+          <Box sx={{ margin: '20px' }}>
+            <TextField error={employeeFirstNameError} helperText={employeeFirstNameError ? 'Field cannot be empty' : ''} label="Employee First Name" variant="outlined" onChange={(event) => setEmployeeFirstName(event.target.value)} value={employeeFirstName || ''} />
+          </Box>
+          <Box sx={{ margin: '20px' }}>
+            <TextField error={employeeLastNameError} helperText={employeeLastNameError ? 'Field cannot be empty' : ''} label="Employee Last Name" variant="outlined" onChange={(event) => setEmployeeLastName(event.target.value)} value={employeeLastName || ''} />
+          </Box>
+          <Box sx={{ margin: '20px', minWidth: '200px' }}>
+            <FormControl fullWidth error={permissionTypeError}>
+              <InputLabel id="type-select-label">Type</InputLabel>
+              <Select
+                labelId="type-select-label"
+                label="Type"
+                value={permissionType || ''}
+                onChange={(event) => setPermissionType(event.target.value)}
+              >
+                {permissionTypes.map((type, index) =>
+                (
+                  <MenuItem key={index} value={type.id}>{type.description}</MenuItem>
+                ))}
+              </Select>
+              {permissionTypeError && (<FormHelperText>Field cannot be empty</FormHelperText>)}
+            </FormControl>
+          </Box>
+          <Box sx={{ margin: '20px', }}>
+            <Button variant="contained" onClick={save} sx={{ padding: '8px', minWidth: '200px' }}>Save</Button>
+          </Box>
         </Box>
-        <Box sx={{ margin: '20px' }}>
-          <TextField id="outlined-basic" error={employeeLastNameError} helperText={employeeLastNameError ? 'Field cannot be empty' : ''} label="Employee Last Name" variant="outlined" onChange={(event) => setEmployeeLastName(event.target.value)} value={employeeLastName} />
-        </Box>
-        <Box sx={{ margin: '20px', minWidth: '200px' }}>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Type</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={permissionType}
-              label="Age"
-              onChange={(event) => setPermissionType(event.target.value)}
-            >
-              {props.permissionTypes.map(type =>
-              (
-                <MenuItem value={type.id} selected={permissionType === type.id} >{type.description}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          {/* <TextField id="outlined-basic" label="Type" variant="outlined" onChange={(event) => setPermissionType(event.target.value)} value={permissionType}/> */}
-        </Box>
-        <Box sx={{ margin: '20px' }}>
-          <Button variant="contained" onClick={save}>Save</Button>
-        </Box>
-      </Box>
+      </Stack>
     </Layout>
   );
 }

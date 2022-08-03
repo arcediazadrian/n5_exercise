@@ -1,12 +1,12 @@
-import { Typography, Grid } from '@mui/material';
+import React from "react";
+
+import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import Layout from "../../components/Layout";
-
-import React from "react";
 
 import {
   useNavigate
@@ -29,13 +29,11 @@ function PermissionsList({ permissions }) {
   }
 
   return (
-    <Layout>
-      <Box
-        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'stretch' }}
-      >
+    <Layout title="Permissions">
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'stretch' }}>
         <Box sx={{ width: '60vw' }}>
-          {permissions.map(permission => (
-            <Item>
+          {permissions.map((permission, index) => (
+            <Item key={index}>
               <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', }}>
                 <Box sx={{ flexGrow: 6 }}>
                   <Typography sx={{ fontSize: 32 }} color="text.primary">
@@ -51,11 +49,7 @@ function PermissionsList({ permissions }) {
                 <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginRight: '20px' }}>
                   <IconButton
                     size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
                     onClick={() => navigateToEdit(permission.id)}
-                    color="inherit"
                   >
                     <EditIcon />
                   </IconButton>

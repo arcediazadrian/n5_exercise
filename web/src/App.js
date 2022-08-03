@@ -1,13 +1,16 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import PermissionsList from "./pages/permissions/PermissionsList"
-import CreateEditPermission from "./pages/permissions/CreateEditPermission"
+import axios from "axios";
 import {
   BrowserRouter,
   Routes,
   Route,
   Navigate
 } from "react-router-dom";
+
+import PermissionsList from "./pages/permissions/PermissionsList"
+import CreateEditPermission from "./pages/permissions/CreateEditPermission"
+import CreateEditPermissionType from "./pages/permissionTypes/CreateEditPermissionType";
+import PermissionTypesList from "./pages/permissionTypes/PermissionTypesList";
 
 function App() {
   const [permissions, setPermissions] = useState([]);
@@ -25,26 +28,23 @@ function App() {
     getInitialData();
   }, [])
 
-
-  const savePermission = async (permission) => {
-    console.log(permission, permission.id === -1)
-
-    if(permission.id === -1){
-      await axios.post('https://localhost:7204/api/Permissions', {...permission, id: 0})
-    }else{
-      await axios.put(`https://localhost:7204/api/Permissions/${permission.id}`, permission)
-    }
-
+  const refreshPermissions = async () => {
     const updatedPermissions = await axios.get('https://localhost:7204/api/Permissions');
-    setPermissions(updatedPermissions.data)
+    setPermissions(updatedPermissions.data);
+  }
+
+  const refreshPermissionTypes = async () => {
+    const updatedPermissionTypes = await axios.get('https://localhost:7204/api/PermissionTypes');
+    setPermissionTypes(updatedPermissionTypes.data);
   }
 
   return (
     <BrowserRouter>
       <Routes>
-          <Route path="/permissions/:permissionId" element={<CreateEditPermission savePermission={savePermission} permissionTypes={permissionTypes}/>} />
-        <Route path="/permissions" element={<PermissionsList permissions={permissions} />} >
-        </Route>
+        <Route path="/permissions/:permissionId" element={<CreateEditPermission refreshPermissions={refreshPermissions} permissionTypes={permissionTypes} />} />
+        <Route path="/permissions" element={<PermissionsList permissions={permissions} />} />
+        <Route path="/permissionTypes/:permissionTypeId" element={<CreateEditPermissionType refreshPermissionTypes={refreshPermissionTypes} />} />
+        <Route path="/permissionTypes" element={<PermissionTypesList permissionTypes={permissionTypes} />} />
         <Route
           path="*"
           element={
