@@ -1,12 +1,15 @@
 using BusinessLogic;
 using Data;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IPermissionService, PermissionService>();
-builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IPermissionTypeService, PermissionTypeService>();
+builder.Services.AddScoped<IPermissionUnitOfWork, PermissionUnitOfWork>();
+builder.Services.AddDbContext<PermissionsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

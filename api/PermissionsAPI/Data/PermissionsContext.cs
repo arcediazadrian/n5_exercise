@@ -1,6 +1,5 @@
 ﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Data
 {
@@ -18,13 +17,6 @@ namespace Data
         public virtual DbSet<Permission> Permissions { get; set; } = null!;
         public virtual DbSet<PermissionType> PermissionTypes { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=LAPTOP-M9VEJBQU;Database=n5_exercise;user id=n5;password=test123;Encrypt=False");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
