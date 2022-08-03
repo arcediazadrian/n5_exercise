@@ -1,14 +1,13 @@
-﻿using Domain;
+﻿using Domain.Models;
 
-namespace Data
+namespace Domain.Interfaces
 {
-    public interface IPermissionRepository
+    public interface IPermissionService
     {
         Task<IEnumerable<Permission>> GetPermissions();
         Task<Permission> GetPermissionById(int id);
-        void InsertPermission(Permission permission);
+        Task InsertPermission(Permission permission);
         Task DeletePermission(int id);
         Task UpdatePermission(int id, Permission permission);
-        Task Save();
     }
 }

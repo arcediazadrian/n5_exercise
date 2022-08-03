@@ -1,9 +1,10 @@
-﻿using Domain;
+﻿using Domain.Interfaces;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Data
 {
-    public class PermissionTypeRepository
+    public class PermissionTypeRepository : IPermissionTypeRepository, IDisposable
     {
         private PermissionsContext context;
 

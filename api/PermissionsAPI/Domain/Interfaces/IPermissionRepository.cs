@@ -1,6 +1,6 @@
-﻿using Domain;
+﻿using Domain.Models;
 
-namespace PermissionsAPI
+namespace Domain.Interfaces
 {
     public interface IPermissionRepository
     {

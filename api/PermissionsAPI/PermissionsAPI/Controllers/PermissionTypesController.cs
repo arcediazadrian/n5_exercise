@@ -1,5 +1,5 @@
-﻿using Data;
-using Domain;
+﻿using Domain.Interfaces;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PermissionsAPI.Controllers
@@ -8,48 +8,45 @@ namespace PermissionsAPI.Controllers
     [ApiController]
     public class PermissionTypesController : ControllerBase
     {
-        private PermissionUnitOfWork unitOfWork = new PermissionUnitOfWork();
+        private IPermissionTypeService permissionTypeService;
+
+        public PermissionTypesController(IPermissionTypeService permissionTypeService)
+        {
+            this.permissionTypeService = permissionTypeService;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var permissionTypes = await unitOfWork.PermissionTypeRepository.GetPermissionTypes();
-
+            var permissionTypes = await permissionTypeService.GetPermissionTypes();
             return Ok(permissionTypes);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var permissionType = await unitOfWork.PermissionTypeRepository.GetPermissionTypeById(id);
-
+            var permissionType = await permissionTypeService.GetPermissionTypeById(id);
             return Ok(permissionType);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PermissionType permissionType)
         {
-            unitOfWork.PermissionTypeRepository.InsertPermissionType(permissionType);
-            await unitOfWork.Save();
-
+            await permissionTypeService.InsertPermissionType(permissionType);
             return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] PermissionType permissionTypeToUpdate)
         {
-            await unitOfWork.PermissionTypeRepository.UpdatePermissionType(id, permissionTypeToUpdate);
-            await unitOfWork.Save();
-
+            await permissionTypeService.UpdatePermissionType(id, permissionTypeToUpdate);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await unitOfWork.PermissionTypeRepository.DeletePermissionType(id);
-            await unitOfWork.Save();
-
+            await permissionTypeService.DeletePermissionType(id);
             return Ok();
         }
     }

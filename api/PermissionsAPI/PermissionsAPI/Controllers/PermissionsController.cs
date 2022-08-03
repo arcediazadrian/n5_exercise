@@ -1,5 +1,5 @@
-using Data;
-using Domain;
+using Domain.Interfaces;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace PermissionsAPI.Controllers
@@ -9,46 +9,45 @@ namespace PermissionsAPI.Controllers
     public class PermissionsController : ControllerBase
     {
 
-        private PermissionUnitOfWork unitOfWork = new PermissionUnitOfWork();
+        private IPermissionService permissionService;
+
+        public PermissionsController(IPermissionService permissionService)
+        {
+            this.permissionService = permissionService;
+        }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var permissions = await unitOfWork.PermissionRepository.GetPermissions();
+            var permissions = await permissionService.GetPermissions();
             return Ok(permissions);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var permission = await unitOfWork.PermissionRepository.GetPermissionById(id);
+            var permission = await permissionService.GetPermissionById(id);
             return Ok(permission);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Permission permission)
         {
-            unitOfWork.PermissionRepository.InsertPermission(permission);
-            await unitOfWork.PermissionRepository.Save();
-
+            await permissionService.InsertPermission(permission);
             return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] Permission permissionToUpdate)
         {
-            await unitOfWork.PermissionRepository.UpdatePermission(id, permissionToUpdate);
-            await unitOfWork.PermissionRepository.Save();
-
+            await permissionService.UpdatePermission(id, permissionToUpdate);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await unitOfWork.PermissionRepository.DeletePermission(id);
-            await unitOfWork.PermissionRepository.Save();
-
+            await permissionService.DeletePermission(id);
             return Ok();
         }
     }

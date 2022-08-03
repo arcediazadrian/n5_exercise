@@ -1,6 +1,6 @@
-﻿using Domain;
+﻿using Domain.Models;
 
-namespace Data
+namespace Domain.Interfaces
 {
     public interface IPermissionTypeRepository
     {

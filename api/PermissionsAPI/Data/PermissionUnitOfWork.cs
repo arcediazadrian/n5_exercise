@@ -1,41 +1,45 @@
-﻿namespace Data
+﻿using Domain.Interfaces;
+
+namespace Data
 {
-    public class PermissionUnitOfWork
+    public class PermissionUnitOfWork : IPermissionUnitOfWork, IDisposable
     {
-        private PermissionsContext context = new PermissionsContext();
-        private PermissionRepository permissionRepository;
-        private PermissionTypeRepository permissionTypeRepository;
+        public IPermissionRepository PermissionRepository { get; set; }
+        public IPermissionTypeRepository PermissionTypeRepository { get; set; }
 
-        public PermissionRepository PermissionRepository
+        private PermissionsContext context;
+
+        public PermissionUnitOfWork(PermissionsContext context)
         {
-            get
-            {
-
-                if (this.permissionRepository == null)
-                {
-                    this.permissionRepository = new PermissionRepository(context);
-                }
-                return permissionRepository;
-            }
-        }
-
-        public PermissionTypeRepository PermissionTypeRepository
-        {
-            get
-            {
-
-                if (this.permissionTypeRepository == null)
-                {
-                    this.permissionTypeRepository = new PermissionTypeRepository(context);
-                }
-                return permissionTypeRepository;
-            }
+            this.context = context;
+            this.PermissionRepository = new PermissionRepository(context);
+            this.PermissionTypeRepository = new PermissionTypeRepository(context);
         }
 
         public async Task Save()
         {
             await context.SaveChangesAsync();
             return;
+        }
+
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
